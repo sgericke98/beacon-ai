@@ -31,7 +31,6 @@ const categories = [
     title: "Sales",
     icon: BarChart3,
     items: [
-      { title: "Data Cleaning Agent", url: "/agents/data-cleaning", active: true },
       { title: "Lead-to-Cash Analysis", url: "/agents/lead-to-cash", active: true },
     ]
   },
@@ -39,7 +38,7 @@ const categories = [
     title: "Data",
     icon: Database,
     items: [
-      { title: "Coming Soon", url: "#", active: false },
+      { title: "Data Cleaning Agent", url: "/agents/data-cleaning", active: true },
     ]
   },
   {
@@ -69,7 +68,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
-  const [expandedCategories, setExpandedCategories] = useState(["Sales"]);
+  const [expandedCategories, setExpandedCategories] = useState(["Sales", "Data"]);
 
   const toggleCategory = (categoryTitle: string) => {
     setExpandedCategories(prev => 
@@ -87,7 +86,7 @@ export function AppSidebar() {
         {/* Logo */}
         <div className="p-6 border-b border-border/50">
           <div className="flex items-center gap-3">
-            <img src={beaconLogo} alt="Beacon" className="h-10 w-auto" />
+            <img src={beaconLogo} alt="Beacon" className="h-16 w-auto" />
           </div>
         </div>
 
