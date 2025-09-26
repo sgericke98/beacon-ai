@@ -169,6 +169,8 @@ export function LeadToCashAgent() {
   const [aiAnalysisComplete, setAiAnalysisComplete] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+  const [selectedContract, setSelectedContract] = useState<any>(null);
+  const [showContractDialog, setShowContractDialog] = useState(false);
   const { toast } = useToast();
 
   const runAIAnalysis = async () => {
@@ -236,6 +238,87 @@ export function LeadToCashAgent() {
         });
       }, 4000);
     }
+  };
+
+  // Mock contract data for detailed view
+  const mockContracts = {
+    "ACME-2024-001": {
+      id: "ACME-2024-001",
+      clientName: "ACME Corporation",
+      contractValue: "$156,000",
+      startDate: "2024-01-15",
+      endDate: "2025-01-14",
+      autoRenewal: true,
+      renewalIncrease: "3%",
+      billingFrequency: "Monthly",
+      usageLimit: "10,000 API calls/month",
+      overageRate: "$0.05 per call",
+      lastBilled: "2024-12-01",
+      currentUsage: "8,432 calls",
+      paymentTerms: "Net 30",
+      issues: [
+        "Volume discount threshold not applied in billing system",
+        "Missing overage charges for September 2024"
+      ],
+      keyTerms: [
+        "20% discount applies when monthly usage exceeds 15,000 calls",
+        "Automatic renewal with 3% annual increase",
+        "60-day notice required for cancellation"
+      ]
+    },
+    "TECHCORP-2023-156": {
+      id: "TECHCORP-2023-156", 
+      clientName: "TechCorp Industries",
+      contractValue: "$89,500",
+      startDate: "2023-06-01",
+      endDate: "2024-05-31",
+      autoRenewal: true,
+      renewalIncrease: "5%",
+      billingFrequency: "Quarterly",
+      usageLimit: "Unlimited",
+      overageRate: "N/A",
+      lastBilled: "2024-09-01",
+      currentUsage: "N/A",
+      paymentTerms: "Net 45",
+      issues: [
+        "Auto-renewal increase not reflected in billing system",
+        "Contract renewed at previous year's rate"
+      ],
+      keyTerms: [
+        "5% annual increase on auto-renewal",
+        "Quarterly billing in advance", 
+        "90-day notice required for termination"
+      ]
+    },
+    "GLOBALINC-2024-089": {
+      id: "GLOBALINC-2024-089",
+      clientName: "Global Inc.",
+      contractValue: "$234,700",
+      startDate: "2024-03-01", 
+      endDate: "2025-02-28",
+      autoRenewal: true,
+      renewalIncrease: "4%",
+      billingFrequency: "Monthly",
+      usageLimit: "25,000 transactions/month",
+      overageRate: "$0.15 per transaction",
+      lastBilled: "2024-12-01",
+      currentUsage: "33,540 transactions",
+      paymentTerms: "Net 15",
+      issues: [
+        "Overage charges not applied for Q3 2024",
+        "Usage exceeded limit by 34% without billing adjustment"
+      ],
+      keyTerms: [
+        "Usage overage billed monthly at $0.15 per transaction",
+        "Volume discounts available at 50,000+ transactions",
+        "Service level agreement guarantees 99.9% uptime"
+      ]
+    }
+  };
+
+  const openContractReview = (contractId: string) => {
+    setSelectedContract(mockContracts[contractId as keyof typeof mockContracts]);
+    setShowContractDialog(true);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -799,7 +882,11 @@ export function LeadToCashAgent() {
                           Contract: ACME-2024-{String(issue.id).padStart(3, '0')} • Last updated: 2 days ago
                         </div>
                         <div className="flex gap-2">
-                          <Button size="sm" variant="default">
+                          <Button 
+                            size="sm" 
+                            variant="default"
+                            onClick={() => openContractReview("ACME-2024-001")}
+                          >
                             Review Contract
                           </Button>
                           <Button size="sm" variant="outline">
@@ -833,7 +920,11 @@ export function LeadToCashAgent() {
                         Contract: TECHCORP-2023-156 • Last updated: 1 week ago
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm" variant="default">
+                        <Button 
+                          size="sm" 
+                          variant="default"
+                          onClick={() => openContractReview("TECHCORP-2023-156")}
+                        >
                           Review Contract
                         </Button>
                         <Button size="sm" variant="outline">
@@ -865,7 +956,11 @@ export function LeadToCashAgent() {
                         Contract: GLOBALINC-2024-089 • Last updated: 3 days ago
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm" variant="default">
+                        <Button 
+                          size="sm" 
+                          variant="default"
+                          onClick={() => openContractReview("GLOBALINC-2024-089")}
+                        >
                           Review Contract
                         </Button>
                         <Button size="sm" variant="outline">
@@ -881,6 +976,144 @@ export function LeadToCashAgent() {
           </TabsContent>
         </Tabs>
       </Card>
+      
+      {/* Contract Review Dialog */}
+      <Dialog open={showContractDialog} onOpenChange={setShowContractDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Contract Review: {selectedContract?.clientName}
+            </DialogTitle>
+            <DialogDescription>
+              Detailed contract analysis and revenue leakage detection
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedContract && (
+            <div className="space-y-6">
+              {/* Contract Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Contract Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Contract ID:</span>
+                      <span className="font-medium">{selectedContract.id}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Client:</span>
+                      <span className="font-medium">{selectedContract.clientName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Value:</span>
+                      <span className="font-medium text-success">{selectedContract.contractValue}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Term:</span>
+                      <span className="font-medium">{selectedContract.startDate} - {selectedContract.endDate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Billing:</span>
+                      <span className="font-medium">{selectedContract.billingFrequency}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Payment Terms:</span>
+                      <span className="font-medium">{selectedContract.paymentTerms}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Usage & Billing</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Usage Limit:</span>
+                      <span className="font-medium">{selectedContract.usageLimit}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Current Usage:</span>
+                      <span className="font-medium">{selectedContract.currentUsage}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Overage Rate:</span>
+                      <span className="font-medium">{selectedContract.overageRate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Last Billed:</span>
+                      <span className="font-medium">{selectedContract.lastBilled}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Auto-Renewal:</span>
+                      <Badge variant={selectedContract.autoRenewal ? "default" : "secondary"}>
+                        {selectedContract.autoRenewal ? "Enabled" : "Disabled"}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Renewal Increase:</span>
+                      <span className="font-medium">{selectedContract.renewalIncrease}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Issues Detected */}
+              <Card className="border-destructive/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2 text-destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    Revenue Leakage Issues ({selectedContract.issues.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {selectedContract.issues.map((issue: string, index: number) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-destructive/5 rounded-lg border border-destructive/10">
+                        <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                        <span className="text-sm">{issue}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Key Terms */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Key Contract Terms</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {selectedContract.keyTerms.map((term: string, index: number) => (
+                      <div key={index} className="flex items-start gap-3 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-success mt-0.5" />
+                        <span>{term}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button className="flex-1">
+                  Generate Recovery Invoice
+                </Button>
+                <Button variant="outline" className="flex-1">
+                  Mark Issues Resolved
+                </Button>
+                <Button variant="outline">
+                  Export Contract Details
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
       
       {/* API Key Dialog */}
       <Dialog open={showApiKeyDialog} onOpenChange={setShowApiKeyDialog}>
