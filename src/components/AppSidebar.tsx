@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import beaconLogo from "@/assets/beacon-logo-white.webp";
+import beaconLogo from "@/assets/beacon-logo-vertical-white.svg";
 
 const categories = [
   {
@@ -33,6 +33,13 @@ const categories = [
     items: [
       { title: "Data Cleaning Agent", url: "/agents/data-cleaning", active: true },
       { title: "Lead-to-Cash Analysis", url: "/agents/lead-to-cash", active: true },
+    ]
+  },
+  {
+    title: "Data",
+    icon: Database,
+    items: [
+      { title: "Coming Soon", url: "#", active: false },
     ]
   },
   {

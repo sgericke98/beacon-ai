@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BarChart3, TrendingUp, Users, DollarSign, Target, CheckCircle, Zap, Shield, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
-import beaconLogo from "@/assets/beacon-logo-black.webp";
+import beaconLogo from "@/assets/beacon-logo-vertical-white.svg";
 
 const Landing = () => {
   return (
