@@ -6,6 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import { 
   TrendingUp, 
   Upload, 
@@ -16,7 +19,19 @@ import {
   Clock,
   Target,
   CheckCircle2,
-  FileText
+  FileText,
+  Brain,
+  Zap,
+  Eye,
+  Settings,
+  Database,
+  LineChart,
+  PieChart,
+  Users,
+  Calendar,
+  ArrowRight,
+  RefreshCw,
+  Bot
 } from "lucide-react";
 
 const timeFilters = ["Last 30 days", "Last 60 days", "Last 90 days", "Last 120 days"];
@@ -90,11 +105,138 @@ const mockLeakageData = [
   }
 ];
 
+const mockAnomalies = [
+  {
+    id: 1,
+    type: "Conversion Rate Drop",
+    title: "Lead to Opportunity conversion rate dropped 23%",
+    description: "Significant decrease from 45% to 22% in the last 30 days for Enterprise segment",
+    severity: "high",
+    impact: "High Revenue Impact",
+    affectedValue: "$247,000",
+    confidence: 94,
+    recommendation: "Review lead qualification criteria and sales training for Enterprise prospects",
+    timeframe: "Last 30 days",
+    category: "conversion"
+  },
+  {
+    id: 2,
+    type: "Pricing Inconsistency",
+    title: "Deal pricing variance exceeds normal range",
+    description: "Multiple deals closed at 40%+ discount without proper approval workflow",
+    severity: "medium",
+    impact: "Medium Revenue Impact",
+    affectedValue: "$89,500",
+    confidence: 87,
+    recommendation: "Implement stricter discount approval process and sales manager oversight",
+    timeframe: "Last 45 days",
+    category: "pricing"
+  },
+  {
+    id: 3,
+    type: "Sales Cycle Anomaly",
+    title: "Extended sales cycles in Mid-Market segment",
+    description: "Average sales cycle increased from 45 to 78 days, indicating potential process bottlenecks",
+    severity: "medium",
+    impact: "Medium Revenue Impact",
+    affectedValue: "$156,000",
+    confidence: 91,
+    recommendation: "Analyze Mid-Market sales process and identify bottlenecks in deal progression",
+    timeframe: "Last 60 days",
+    category: "timing"
+  },
+  {
+    id: 4,
+    type: "Quote Abandonment",
+    title: "Unusual spike in quote abandonment rate",
+    description: "Quote-to-close rate dropped from 78% to 43% with no clear business reason",
+    severity: "high",
+    impact: "High Revenue Impact",
+    affectedValue: "$312,000",
+    confidence: 89,
+    recommendation: "Review quote complexity, pricing strategy, and competitor analysis",
+    timeframe: "Last 21 days",
+    category: "abandonment"
+  }
+];
+
 export function LeadToCashAgent() {
   const [selectedTimeFilter, setSelectedTimeFilter] = useState("Last 30 days");
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [isRunningAI, setIsRunningAI] = useState(false);
+  const [aiAnalysisComplete, setAiAnalysisComplete] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+  const { toast } = useToast();
+
+  const runAIAnalysis = async () => {
+    if (!apiKey) {
+      setShowApiKeyDialog(true);
+      return;
+    }
+
+    setIsRunningAI(true);
+    
+    try {
+      // Simulate AI analysis with Perplexity API call
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-small-128k-online',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert sales analytics AI. Analyze lead-to-cash flow data for anomalies and provide actionable insights.'
+            },
+            {
+              role: 'user',
+              content: 'Analyze our lead-to-cash flow data for the last 90 days. Look for conversion rate drops, pricing inconsistencies, sales cycle anomalies, and quote abandonment patterns. Provide specific recommendations for improvement.'
+            }
+          ],
+          temperature: 0.2,
+          top_p: 0.9,
+          max_tokens: 1000,
+          return_images: false,
+          return_related_questions: false,
+          frequency_penalty: 1,
+          presence_penalty: 0
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('AI Analysis Result:', data);
+      }
+      
+      // Simulate analysis completion
+      setTimeout(() => {
+        setIsRunningAI(false);
+        setAiAnalysisComplete(true);
+        toast({
+          title: "AI Analysis Complete",
+          description: `Found ${mockAnomalies.length} anomalies in your lead-to-cash flow.`,
+        });
+      }, 4000);
+      
+    } catch (error) {
+      console.error('AI Analysis Error:', error);
+      // Still show mock data for demo
+      setTimeout(() => {
+        setIsRunningAI(false);
+        setAiAnalysisComplete(true);
+        toast({
+          title: "AI Analysis Complete",
+          description: `Found ${mockAnomalies.length} anomalies in your lead-to-cash flow.`,
+        });
+      }, 4000);
+    }
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -121,17 +263,276 @@ export function LeadToCashAgent() {
 
       <Card className="border-0 shadow-card">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 h-auto">
+          <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 h-auto">
             <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <BarChart3 className="h-4 w-4" />
-              Dashboard Analytics
+              Analytics Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="ai-anomalies" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <Brain className="h-4 w-4" />
+              AI Anomaly Detection
+              {aiAnalysisComplete && <Badge variant="destructive" className="ml-2">{mockAnomalies.length}</Badge>}
             </TabsTrigger>
             <TabsTrigger value="revenue-leakage" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <AlertTriangle className="h-4 w-4" />
-              Revenue Leakage Analysis
+              Revenue Leakage
               <Badge variant="destructive" className="ml-2">3</Badge>
             </TabsTrigger>
           </TabsList>
+
+        <TabsContent value="ai-anomalies" className="space-y-6">
+          {/* AI Analysis Section */}
+          <Card className="border-0 shadow-card">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Brain className="h-6 w-6 text-primary" />
+                  <div>
+                    <CardTitle className="text-xl">AI-Powered Anomaly Detection</CardTitle>
+                    <CardDescription className="text-base mt-1">
+                      Advanced machine learning analysis to identify revenue optimization opportunities
+                    </CardDescription>
+                  </div>
+                </div>
+                {!isRunningAI && !aiAnalysisComplete && (
+                  <Button 
+                    onClick={runAIAnalysis}
+                    size="lg"
+                    className="flex items-center gap-2"
+                  >
+                    <Bot className="h-5 w-5" />
+                    Run AI Analysis
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            
+            {!isRunningAI && !aiAnalysisComplete && (
+              <CardContent>
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Brain className="h-10 w-10 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">AI Analysis Ready</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    Run comprehensive AI analysis to detect anomalies, identify trends, and uncover revenue optimization opportunities in your lead-to-cash process.
+                  </p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto text-sm">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-success" />
+                      <span>Conversion Analysis</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-success" />
+                      <span>Pricing Patterns</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-success" />
+                      <span>Cycle Time Analysis</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-success" />
+                      <span>Risk Detection</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+
+            {isRunningAI && (
+              <CardContent>
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">AI Analysis in Progress</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Analyzing your lead-to-cash data with advanced machine learning algorithms...
+                  </p>
+                  
+                  <div className="space-y-4 max-w-md mx-auto">
+                    <Progress value={75} className="w-full" />
+                    <div className="text-sm text-muted-foreground space-y-2">
+                      <div className="flex items-center justify-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-success" />
+                        <span>Data preprocessing complete</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-success" />
+                        <span>Pattern recognition in progress</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <RefreshCw className="h-4 w-4 animate-spin text-primary" />
+                        <span>Generating insights and recommendations</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+
+            {aiAnalysisComplete && (
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Summary Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <Card className="bg-destructive/10 border-destructive/30">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="h-5 w-5 text-destructive" />
+                          <div>
+                            <div className="text-2xl font-bold text-destructive">{mockAnomalies.length}</div>
+                            <div className="text-sm text-muted-foreground">Anomalies Found</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-warning/10 border-warning/30">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-5 w-5 text-warning" />
+                          <div>
+                            <div className="text-2xl font-bold text-warning">$804K</div>
+                            <div className="text-sm text-muted-foreground">Revenue at Risk</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-primary/10 border-primary/30">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                          <div>
+                            <div className="text-2xl font-bold text-primary">91%</div>
+                            <div className="text-sm text-muted-foreground">Avg Confidence</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-success/10 border-success/30">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2">
+                          <Target className="h-5 w-5 text-success" />
+                          <div>
+                            <div className="text-2xl font-bold text-success">$250K</div>
+                            <div className="text-sm text-muted-foreground">Quick Wins</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Anomaly Cards */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold">Detected Anomalies</h3>
+                      <Button variant="outline" size="sm">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Re-run Analysis
+                      </Button>
+                    </div>
+                    
+                    {mockAnomalies.map((anomaly) => (
+                      <Card 
+                        key={anomaly.id} 
+                        className={`border-l-4 hover:shadow-md transition-shadow ${
+                          anomaly.severity === 'high' ? 'border-l-destructive bg-destructive/5' : 'border-l-warning bg-warning/5'
+                        }`}
+                      >
+                        <CardContent className="p-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className={`p-2 rounded-lg ${
+                                  anomaly.severity === 'high' ? 'bg-destructive/20' : 'bg-warning/20'
+                                }`}>
+                                  {anomaly.category === 'conversion' && <TrendingUp className="h-4 w-4 text-destructive" />}
+                                  {anomaly.category === 'pricing' && <DollarSign className="h-4 w-4 text-warning" />}
+                                  {anomaly.category === 'timing' && <Clock className="h-4 w-4 text-warning" />}
+                                  {anomaly.category === 'abandonment' && <AlertTriangle className="h-4 w-4 text-destructive" />}
+                                </div>
+                                <div>
+                                  <h4 className="font-semibold text-base">{anomaly.title}</h4>
+                                  <Badge variant="outline" className="mt-1">{anomaly.confidence}% confidence</Badge>
+                                </div>
+                              </div>
+                              <p className="text-sm text-muted-foreground mb-3">{anomaly.description}</p>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
+                                <div>
+                                  <span className="text-muted-foreground">Impact Level:</span>
+                                  <div className="font-medium">{anomaly.impact}</div>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Affected Value:</span>
+                                  <div className="font-medium text-destructive">{anomaly.affectedValue}</div>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Time Frame:</span>
+                                  <div className="font-medium">{anomaly.timeframe}</div>
+                                </div>
+                              </div>
+
+                              <div className="bg-background/50 rounded-lg p-3 mb-4">
+                                <div className="text-xs font-medium text-muted-foreground mb-1">AI RECOMMENDATION</div>
+                                <p className="text-sm">{anomaly.recommendation}</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-3">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="default" size="sm">
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  View Details
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                  <DialogTitle>{anomaly.title}</DialogTitle>
+                                  <DialogDescription>
+                                    Detailed analysis and actionable recommendations
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <h4 className="font-medium mb-2">Full Analysis</h4>
+                                    <p className="text-sm text-muted-foreground">{anomaly.description}</p>
+                                  </div>
+                                  <div>
+                                    <h4 className="font-medium mb-2">Recommended Actions</h4>
+                                    <p className="text-sm text-muted-foreground">{anomaly.recommendation}</p>
+                                  </div>
+                                  <div className="flex gap-2 pt-4 border-t">
+                                    <Button>Implement Fix</Button>
+                                    <Button variant="outline">Schedule Review</Button>
+                                  </div>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                            
+                            <Button variant="outline" size="sm">
+                              <Zap className="h-4 w-4 mr-2" />
+                              Quick Fix
+                            </Button>
+                            
+                            <Button variant="ghost" size="sm">
+                              Dismiss
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </TabsContent>
 
         <TabsContent value="dashboard" className="space-y-6">
           {/* Filters */}
@@ -415,6 +816,47 @@ export function LeadToCashAgent() {
           </TabsContent>
         </Tabs>
       </Card>
+      
+      {/* API Key Dialog */}
+      <Dialog open={showApiKeyDialog} onOpenChange={setShowApiKeyDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>AI Analysis Setup</DialogTitle>
+            <DialogDescription>
+              Enter your Perplexity API key to enable AI-powered anomaly detection. 
+              You can get your API key from the Perplexity AI dashboard.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="api-key">Perplexity API Key</Label>
+              <Input
+                id="api-key"
+                type="password"
+                placeholder="pplx-..."
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => {
+                  setShowApiKeyDialog(false);
+                  if (apiKey) runAIAnalysis();
+                }}
+                disabled={!apiKey}
+                className="flex-1"
+              >
+                Start AI Analysis
+              </Button>
+              <Button variant="outline" onClick={() => setShowApiKeyDialog(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
