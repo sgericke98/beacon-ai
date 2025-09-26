@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { LeadToCashAgent } from "@/components/LeadToCashAgent";
+import { ChatAgent } from "@/components/ChatAgent";
 
 const LeadToCash = () => {
   return (
@@ -16,8 +17,16 @@ const LeadToCash = () => {
             </div>
           </header>
           
-          <div className="flex-1 p-6">
-            <LeadToCashAgent />
+          <div className="flex-1 flex">
+            {/* Main Agent Content */}
+            <div className="flex-1 p-6">
+              <LeadToCashAgent />
+            </div>
+            
+            {/* Chat Agent Sidebar */}
+            <div className="w-96 border-l bg-card/50 p-4">
+              <ChatAgent agentType="lead-to-cash" />
+            </div>
           </div>
         </main>
       </div>

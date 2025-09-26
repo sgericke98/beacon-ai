@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { DataCleaningAgent } from "@/components/DataCleaningAgent";
+import { ChatAgent } from "@/components/ChatAgent";
 
 const DataCleaning = () => {
   return (
@@ -16,8 +17,16 @@ const DataCleaning = () => {
             </div>
           </header>
           
-          <div className="flex-1 p-6">
-            <DataCleaningAgent />
+          <div className="flex-1 flex">
+            {/* Main Agent Content */}
+            <div className="flex-1 p-6">
+              <DataCleaningAgent />
+            </div>
+            
+            {/* Chat Agent Sidebar */}
+            <div className="w-96 border-l bg-card/50 p-4">
+              <ChatAgent agentType="data-cleaning" />
+            </div>
           </div>
         </main>
       </div>
