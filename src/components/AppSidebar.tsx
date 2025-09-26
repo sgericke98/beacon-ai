@@ -41,7 +41,7 @@ const categories = [
     title: "Data",
     icon: Database,
     items: [
-      { title: "Data Cleaning Agent", url: "/agents/data-cleaning", active: true },
+      { title: "Data Cleaning", url: "/agents/data-cleaning", active: true },
     ]
   },
   {

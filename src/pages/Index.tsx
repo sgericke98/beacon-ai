@@ -163,7 +163,7 @@ const Index = () => {
                               </div>
                               <div>
                                 <CardTitle className="text-xl font-semibold text-foreground">
-                                  Data Cleaning Agent
+                                  Data Cleaning
                                 </CardTitle>
                                 <div className="flex items-center gap-2 mt-1">
                                   <Badge className="gradient-primary text-white border-0 text-xs">Active</Badge>

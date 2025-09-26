@@ -140,7 +140,7 @@ export function ChatAgent({ agentType }: ChatAgentProps) {
           </div>
           <div>
             <CardTitle className="text-lg">
-              {agentType === 'data-cleaning' ? 'Data Cleaning Agent' : 'Lead-to-Cash Agent'}
+              {agentType === 'data-cleaning' ? 'Data Cleaning' : 'Lead-to-Cash Agent'}
             </CardTitle>
             <CardDescription className="text-sm">
               AI-powered assistant • Online

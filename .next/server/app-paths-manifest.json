@@ -1,3 +1,5 @@
 {
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/agents/data-cleaning/page": "app/agents/data-cleaning/page.js",
+  "/agents/lead-to-cash/page": "app/agents/lead-to-cash/page.js"
 }

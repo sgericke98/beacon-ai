@@ -665,7 +665,7 @@ export function LeadToCashAgent() {
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Customer Tier</label>
+                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Customer Segment</label>
                   <Select defaultValue="All">
                     <SelectTrigger>
                       <SelectValue />
