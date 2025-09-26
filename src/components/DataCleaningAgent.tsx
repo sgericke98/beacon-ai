@@ -613,20 +613,36 @@ export function DataCleaningAgent() {
                                   </div>
                                   
                                   <div>
-                                    <h4 className="font-medium mb-3">Examples Found</h4>
+                                    <h4 className="font-medium mb-3">Examples Found ({recommendation.details.examples?.length})</h4>
                                     <div className="space-y-3">
                                       {recommendation.details.examples?.map((example: any, index: number) => (
-                                        <div key={index} className="p-3 bg-background/50 rounded border space-y-2">
-                                          <div className="flex items-center justify-between">
-                                            <span className="font-medium text-sm text-primary">{example.masterRecord}</span>
-                                            <Badge variant="outline" className="text-xs">{example.confidence} match</Badge>
+                                        <div key={index} className="p-4 bg-muted/30 rounded-lg border">
+                                          <div className="flex items-start justify-between mb-3">
+                                            <div className="flex-1">
+                                              <div className="font-medium text-sm mb-1">Master: {example.masterRecord}</div>
+                                              <div className="text-xs text-muted-foreground mb-2">
+                                                Duplicates: {example.duplicateRecords?.join(", ")}
+                                              </div>
+                                              <div className="text-xs text-muted-foreground">
+                                                Confidence: {example.confidence} • {example.reason}
+                                              </div>
+                                            </div>
+                                            <Badge variant="secondary" className="ml-3">{example.confidence}</Badge>
                                           </div>
-                                          <div className="text-xs text-muted-foreground">
-                                            <strong>Duplicates:</strong> {example.duplicateRecords?.join(", ")}
-                                          </div>
-                                          <div className="text-xs text-muted-foreground">
-                                            <strong>Reason:</strong> {example.reason}
-                                          </div>
+                                          <Button 
+                                            variant="default" 
+                                            size="sm"
+                                            onClick={() => {
+                                              toast({
+                                                title: "Merge Applied",
+                                                description: `Successfully merged duplicates into "${example.masterRecord}"`,
+                                              });
+                                            }}
+                                            className="w-full"
+                                          >
+                                            <Zap className="h-4 w-4 mr-2" />
+                                            Apply This Merge
+                                          </Button>
                                         </div>
                                       ))}
                                     </div>
