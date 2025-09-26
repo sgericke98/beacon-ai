@@ -1,73 +1,243 @@
-# Welcome to your Lovable project
+# 🚀 Beacon Platform
 
-## Project info
+> **AI-Powered Business Intelligence Platform**  
+> Transform your business data into actionable insights with intelligent agents.
 
-**URL**: https://lovable.dev/projects/2941e1bf-97fc-4f81-867c-7e734c42dca3
+[![Next.js](https://img.shields.io/badge/Next.js-14+-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3+-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![React](https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+### 🤖 **AI Agents**
+- **Data Cleaning Agent** - AI-powered deduplication for accounts and contract names
+- **Lead-to-Cash Analysis** - Comprehensive sales process analytics with revenue leakage detection
+- **Coming Soon**: People, Finance, and Strategy agents
 
-**Use Lovable**
+### 🎨 **Modern UI/UX**
+- **Professional Dashboard** - Clean, intuitive interface with real-time status indicators
+- **Responsive Design** - Optimized for all devices and screen sizes
+- **Dark Mode Support** - Elegant dark theme with smooth transitions
+- **Interactive Components** - Hover effects, animations, and smooth transitions
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2941e1bf-97fc-4f81-867c-7e734c42dca3) and start prompting.
+### 🛠 **Technical Stack**
+- **Next.js 14+** - App Router with Server Components
+- **TypeScript** - Full type safety and better developer experience
+- **Tailwind CSS** - Utility-first CSS framework with custom design system
+- **shadcn/ui** - Beautiful, accessible component library
+- **TanStack Query** - Powerful data fetching and caching
+- **React Hook Form + Zod** - Form handling with validation
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Quick Start
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js 18+ 
+- npm, yarn, or pnpm
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-org/beacon-platform.git
+   cd beacon-platform
+   ```
 
-Follow these steps:
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. **Start the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📁 Project Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+beacon/
+├── app/                    # Next.js App Router
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx          # Home page
+│   ├── dashboard/        # Dashboard pages
+│   ├── agents/           # Agent pages
+│   └── setup/            # Setup pages
+├── src/
+│   ├── components/        # React components
+│   │   ├── ui/           # shadcn/ui components
+│   │   ├── AppSidebar.tsx
+│   │   ├── ChatAgent.tsx
+│   │   ├── DataCleaningAgent.tsx
+│   │   └── LeadToCashAgent.tsx
+│   ├── pages/            # Page components
+│   ├── hooks/            # Custom React hooks
+│   └── lib/              # Utility functions
+├── public/
+│   └── assets/           # Static assets
+└── package.json
 ```
 
-**Edit a file directly in GitHub**
+## 🎯 Available Agents
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 📊 **Data Cleaning Agent**
+- **Purpose**: AI-powered deduplication and data quality improvement
+- **Features**: 
+  - Automatic duplicate detection
+  - Data consistency validation
+  - Real-time processing indicators
+  - 99.9% accuracy rate
 
-**Use GitHub Codespaces**
+### 💰 **Lead-to-Cash Analysis Agent**
+- **Purpose**: Comprehensive sales process analytics
+- **Features**:
+  - Revenue leakage detection
+  - Contract analysis
+  - Billing discrepancy identification
+  - Revenue optimization insights
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 🔮 **Coming Soon**
+- **People Agents** - HR analytics and talent acquisition
+- **Finance Agents** - Financial forecasting and budget analysis
+- **Strategy Agents** - Market analysis and competitive intelligence
 
-## What technologies are used for this project?
+## 🛠 Development
 
-This project is built with:
+### Available Scripts
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+# Development
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
 
-## How can I deploy this project?
+# Preview
+npm run preview      # Preview production build
+```
 
-Simply open [Lovable](https://lovable.dev/projects/2941e1bf-97fc-4f81-867c-7e734c42dca3) and click on Share -> Publish.
+### Environment Variables
 
-## Can I connect a custom domain to my Lovable project?
+Create a `.env.local` file in the root directory:
 
-Yes, you can!
+```env
+# Add your environment variables here
+NEXT_PUBLIC_API_URL=your_api_url
+NEXT_PUBLIC_APP_NAME=Beacon Platform
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🎨 Design System
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Colors
+- **Primary**: Custom gradient system
+- **Accent**: Complementary accent colors
+- **Success**: Green for positive states
+- **Warning**: Orange for caution states
+- **Info**: Blue for informational states
+
+### Typography
+- **Headings**: Bold, semibold weights
+- **Body**: Regular, medium weights
+- **Captions**: Light, small sizes
+
+### Components
+- **Cards**: Elevated with shadows and borders
+- **Buttons**: Multiple variants with hover states
+- **Badges**: Status indicators with color coding
+- **Sidebar**: Professional navigation with status indicators
+
+## 📱 Responsive Design
+
+The platform is fully responsive and optimized for:
+- **Mobile**: 320px - 768px
+- **Tablet**: 768px - 1024px
+- **Desktop**: 1024px+
+- **Large Desktop**: 1440px+
+
+## 🔧 Configuration
+
+### Next.js Configuration
+The project uses Next.js 14+ with App Router. Key configurations:
+- **Image Optimization**: Enabled with custom settings
+- **Webpack**: Custom alias resolution
+- **Output**: Standalone for deployment
+
+### Tailwind Configuration
+Custom Tailwind setup with:
+- **Design Tokens**: CSS variables for theming
+- **Custom Colors**: Primary, accent, and semantic colors
+- **Custom Shadows**: Elegant shadow system
+- **Custom Animations**: Smooth transitions
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables
+3. Deploy automatically on push
+
+### Docker
+```bash
+# Build Docker image
+docker build -t beacon-platform .
+
+# Run container
+docker run -p 3000:3000 beacon-platform
+```
+
+### Manual Deployment
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm run start
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Documentation**: [docs.beacon-platform.com](https://docs.beacon-platform.com)
+- **Issues**: [GitHub Issues](https://github.com/your-org/beacon-platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-org/beacon-platform/discussions)
+
+## 🙏 Acknowledgments
+
+- **Next.js Team** - For the amazing framework
+- **Vercel** - For the deployment platform
+- **Tailwind CSS** - For the utility-first CSS framework
+- **shadcn/ui** - For the beautiful component library
+- **Radix UI** - For accessible component primitives
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the Beacon Team**
+
+[Website](https://beacon-platform.com) • [Documentation](https://docs.beacon-platform.com) • [Support](https://support.beacon-platform.com)
+
+</div>
