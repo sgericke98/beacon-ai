@@ -34,10 +34,34 @@ const dataSources = [
 ];
 
 const dataTypes = [
-  { value: "accounts", label: "Accounts & Companies", description: "Customer and prospect information" },
-  { value: "contacts", label: "Contacts & Leads", description: "Individual contact records" },
-  { value: "opportunities", label: "Opportunities & Deals", description: "Sales pipeline data" },
-  { value: "contracts", label: "Contracts & Agreements", description: "Legal and commercial documents" },
+  { 
+    value: "accounts", 
+    label: "Accounts & Companies", 
+    description: "Customer and prospect information",
+    count: "2,847 records",
+    icon: Database
+  },
+  { 
+    value: "contacts", 
+    label: "Contacts & Leads", 
+    description: "Individual contact records",
+    count: "5,234 records", 
+    icon: Users
+  },
+  { 
+    value: "opportunities", 
+    label: "Opportunities & Deals", 
+    description: "Sales pipeline data",
+    count: "1,892 records",
+    icon: Target
+  },
+  { 
+    value: "contracts", 
+    label: "Contracts & Agreements", 
+    description: "Legal and commercial documents",
+    count: "1,256 documents",
+    icon: FileText
+  },
 ];
 
 const mockAnalysisSteps = [
@@ -166,42 +190,52 @@ const mockHistory = [
   {
     id: 1,
     timestamp: "2024-01-15 14:30:22",
-    action: "Merged duplicate accounts",
-    details: "Consolidated 5 duplicate 'Acme Corp' variations into single master record",
-    user: "System Auto-Apply",
-    status: "completed"
+    action: "Merged Duplicate Accounts",
+    details: "Successfully merged 5 variations of 'Acme Corp' into one master record. This eliminated confusion and improved data accuracy.",
+    user: "AI Agent",
+    status: "completed",
+    impact: "Improved data accuracy by 15%",
+    recordsAffected: 5
   },
   {
     id: 2,
     timestamp: "2024-01-15 14:25:18",
-    action: "Standardized company names",
-    details: "Applied naming convention rules to 34 company records",
-    user: "System Auto-Apply", 
-    status: "completed"
+    action: "Standardized Company Names",
+    details: "Applied consistent naming rules to 34 companies (e.g., 'Inc.' → 'Inc', 'LLC.' → 'LLC'). Makes searching and reporting more reliable.",
+    user: "AI Agent", 
+    status: "completed",
+    impact: "Enhanced search accuracy",
+    recordsAffected: 34
   },
   {
     id: 3,
     timestamp: "2024-01-15 14:20:45",
-    action: "Fixed invalid emails",
-    details: "Corrected 8 email addresses with formatting issues",
+    action: "Fixed Invalid Email Addresses",
+    details: "Corrected 8 email addresses with typos like missing '@' symbols and invalid domains. Prevents bounced emails.",
     user: "John Smith",
-    status: "completed"
+    status: "completed",
+    impact: "Reduced email bounce rate",
+    recordsAffected: 8
   },
   {
     id: 4,
     timestamp: "2024-01-15 14:15:32",
-    action: "Data enrichment",
-    details: "Added missing phone numbers to 23 contact records",
-    user: "System Auto-Apply",
-    status: "completed"
+    action: "Enriched Contact Information",
+    details: "Added missing phone numbers to 23 contacts using LinkedIn data. Improves sales team outreach capabilities.",
+    user: "AI Agent",
+    status: "completed",
+    impact: "Increased contact completeness",
+    recordsAffected: 23
   },
   {
     id: 5,
     timestamp: "2024-01-15 14:10:15",
-    action: "Rejected duplicate suggestion",
-    details: "Marked 'Global Inc' and 'Global Industries' as separate entities",
+    action: "Reviewed Duplicate Suggestion",
+    details: "Manually reviewed and confirmed that 'Global Inc' and 'Global Industries' are separate companies, not duplicates.",
     user: "Jane Doe",
-    status: "rejected"
+    status: "rejected",
+    impact: "Prevented incorrect merge",
+    recordsAffected: 2
   }
 ];
 
@@ -213,10 +247,11 @@ export function DataCleaningAgent() {
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [selectedRecommendation, setSelectedRecommendation] = useState<typeof mockRecommendations[0] | null>(null);
   const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
-    apiKey: ""
+    username: "admin@company.com",
+    password: "••••••••••",
+    apiKey: "••••••••••••••••••••"
   });
+  const [isConnected, setIsConnected] = useState(true);
   const { toast } = useToast();
 
   const handleDataTypeToggle = (dataType: string) => {
@@ -326,39 +361,43 @@ export function DataCleaningAgent() {
                   </Select>
                 </div>
 
-                {/* Credentials Section */}
+                {/* Connection Status */}
                 {selectedSource && selectedSource !== 'csv' && (
-                  <div className="space-y-4 p-4 bg-accent/20 rounded-lg border border-accent/30">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="p-1.5 bg-primary/10 rounded-lg">
-                        {selectedSourceInfo && <selectedSourceInfo.icon className="h-4 w-4 text-primary" />}
+                  <div className="space-y-4 p-4 bg-success/10 rounded-lg border border-success/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-success/20 rounded-lg">
+                          {selectedSourceInfo && <selectedSourceInfo.icon className="h-4 w-4 text-success" />}
+                        </div>
+                        <Label className="text-sm font-semibold text-foreground">
+                          {selectedSourceInfo?.label} Connection
+                        </Label>
                       </div>
-                      <Label className="text-sm font-semibold text-foreground">
-                        {selectedSourceInfo?.label} Connection Details
-                      </Label>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                        <Badge variant="outline" className="text-success border-success/30 bg-success/10">
+                          Connected
+                        </Badge>
+                      </div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="username">Username/Email</Label>
-                        <Input
-                          id="username"
-                          type="text"
-                          placeholder="your.email@company.com"
-                          value={credentials.username}
-                          onChange={(e) => setCredentials(prev => ({...prev, username: e.target.value}))}
-                        />
+                        <Label className="text-xs text-muted-foreground">Username/Email</Label>
+                        <div className="p-2 bg-background/50 rounded border text-sm">
+                          {credentials.username}
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="apiKey">API Key</Label>
-                        <Input
-                          id="apiKey"
-                          type="password"
-                          placeholder="Enter your API key"
-                          value={credentials.apiKey}
-                          onChange={(e) => setCredentials(prev => ({...prev, apiKey: e.target.value}))}
-                        />
+                        <Label className="text-xs text-muted-foreground">API Key</Label>
+                        <div className="p-2 bg-background/50 rounded border text-sm font-mono">
+                          {credentials.apiKey}
+                        </div>
                       </div>
+                    </div>
+                    
+                    <div className="text-xs text-muted-foreground">
+                      Last sync: 2 minutes ago • Data access: Read/Write permissions active
                     </div>
                   </div>
                 )}
@@ -379,14 +418,28 @@ export function DataCleaningAgent() {
                       >
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-medium text-sm">{dataType.label}</h3>
-                                {selectedDataTypes.includes(dataType.value) && (
-                                  <CheckCircle className="h-4 w-4 text-primary" />
-                                )}
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className={`p-2 rounded-lg ${
+                                selectedDataTypes.includes(dataType.value) 
+                                  ? 'bg-primary/20' 
+                                  : 'bg-muted/50'
+                              }`}>
+                                <dataType.icon className={`h-4 w-4 ${
+                                  selectedDataTypes.includes(dataType.value) 
+                                    ? 'text-primary' 
+                                    : 'text-muted-foreground'
+                                }`} />
                               </div>
-                              <p className="text-xs text-muted-foreground">{dataType.description}</p>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="font-medium text-sm">{dataType.label}</h3>
+                                  {selectedDataTypes.includes(dataType.value) && (
+                                    <CheckCircle className="h-4 w-4 text-primary" />
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground mb-1">{dataType.description}</p>
+                                <p className="text-xs font-medium text-primary">{dataType.count}</p>
+                              </div>
                             </div>
                           </div>
                         </CardContent>
@@ -671,24 +724,37 @@ export function DataCleaningAgent() {
                       )}
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-medium text-foreground">{change.action}</h3>
-                        <time className="text-xs text-muted-foreground">{change.timestamp}</time>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-2">{change.details}</p>
-                      <div className="flex items-center gap-4 text-xs">
-                        <span className="text-muted-foreground">
-                          By: <span className="font-medium">{change.user}</span>
-                        </span>
-                        <Badge 
-                          variant={change.status === 'completed' ? 'default' : 'destructive'}
-                          className="text-xs"
-                        >
-                          {change.status}
-                        </Badge>
-                      </div>
-                    </div>
+                     <div className="flex-1 min-w-0">
+                       <div className="flex items-center justify-between mb-1">
+                         <h3 className="font-medium text-foreground">{change.action}</h3>
+                         <time className="text-xs text-muted-foreground">{change.timestamp}</time>
+                       </div>
+                       <p className="text-sm text-muted-foreground mb-3">{change.details}</p>
+                       
+                       {change.impact && (
+                         <div className="mb-2 p-2 bg-accent/20 rounded text-xs">
+                           <span className="font-medium text-foreground">Impact: </span>
+                           <span className="text-muted-foreground">{change.impact}</span>
+                         </div>
+                       )}
+                       
+                       <div className="flex items-center gap-4 text-xs">
+                         <span className="text-muted-foreground">
+                           By: <span className="font-medium">{change.user}</span>
+                         </span>
+                         {change.recordsAffected && (
+                           <span className="text-muted-foreground">
+                             Records: <span className="font-medium">{change.recordsAffected}</span>
+                           </span>
+                         )}
+                         <Badge 
+                           variant={change.status === 'completed' ? 'default' : 'destructive'}
+                           className="text-xs"
+                         >
+                           {change.status}
+                         </Badge>
+                       </div>
+                     </div>
                   </div>
                 ))}
               </div>

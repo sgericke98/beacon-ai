@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import beaconLogo from "@/assets/beacon-logo-black.webp";
+import beaconLogo from "@/assets/beacon-logo-white.webp";
 
 const categories = [
   {
