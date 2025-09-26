@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChatAgent } from "@/components/ChatAgent";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -346,7 +347,7 @@ export function LeadToCashAgent() {
 
       <Card className="border-0 shadow-card">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 h-auto">
+          <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 h-auto">
             <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <BarChart3 className="h-4 w-4" />
               Analytics Dashboard
@@ -360,6 +361,10 @@ export function LeadToCashAgent() {
               <AlertTriangle className="h-4 w-4" />
               Revenue Leakage
               <Badge variant="destructive" className="ml-2">3</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="chat" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <Bot className="h-4 w-4" />
+              AI Assistant
             </TabsTrigger>
           </TabsList>
 
@@ -973,6 +978,12 @@ export function LeadToCashAgent() {
               </div>
             </CardContent>
           </Card>
+          </TabsContent>
+
+          <TabsContent value="chat" className="space-y-6">
+            <div className="h-[600px]">
+              <ChatAgent agentType="lead-to-cash" />
+            </div>
           </TabsContent>
         </Tabs>
       </Card>
