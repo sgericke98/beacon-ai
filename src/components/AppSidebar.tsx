@@ -100,11 +100,6 @@ export function AppSidebar() {
               </div>
             </div>
           </div>
-          <div className="mt-4 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full border border-primary/20 shadow-sm">
-              <div className="w-2 h-2 bg-success rounded-full animate-pulse shadow-sm"></div>
-            </div>
-          </div>
         </div>
 
         {/* Navigation */}
