@@ -111,26 +111,27 @@ export function LeadToCashAgent() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">Lead-to-Cash Analysis Agent</h1>
-        <p className="text-muted-foreground">
+    <div className="space-y-8 animate-fade-in">
+      <div className="text-center lg:text-left">
+        <h1 className="text-3xl font-bold text-foreground mb-3 tracking-tight">Lead-to-Cash Analysis Agent</h1>
+        <p className="text-lg text-muted-foreground max-w-2xl">
           Comprehensive analytics and revenue leakage detection for your sales process.
         </p>
       </div>
 
-      <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="dashboard" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Dashboard Analytics
-          </TabsTrigger>
-          <TabsTrigger value="revenue-leakage" className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4" />
-            Revenue Leakage Analysis
-            <Badge variant="destructive" className="ml-2">3</Badge>
-          </TabsTrigger>
-        </TabsList>
+      <Card className="border-0 shadow-card">
+        <Tabs defaultValue="dashboard" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 h-auto">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <BarChart3 className="h-4 w-4" />
+              Dashboard Analytics
+            </TabsTrigger>
+            <TabsTrigger value="revenue-leakage" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <AlertTriangle className="h-4 w-4" />
+              Revenue Leakage Analysis
+              <Badge variant="destructive" className="ml-2">3</Badge>
+            </TabsTrigger>
+          </TabsList>
 
         <TabsContent value="dashboard" className="space-y-6">
           {/* Filters */}
@@ -411,8 +412,9 @@ export function LeadToCashAgent() {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </Card>
     </div>
   );
 }

@@ -76,16 +76,16 @@ export function AppSidebar() {
 
   return (
     <Sidebar className={collapsed ? "w-16" : "w-64"}>
-      <SidebarContent className="bg-card border-r">
+      <SidebarContent className="bg-card border-r shadow-card">
         {/* Logo */}
-        <div className="p-4 border-b">
+        <div className="p-6 border-b border-border/50">
           {!collapsed ? (
-            <div className="flex items-center gap-2">
-              <img src={beaconLogo} alt="Beacon" className="h-8 w-auto" />
+            <div className="flex items-center gap-3">
+              <img src={beaconLogo} alt="Beacon" className="h-10 w-auto" />
             </div>
           ) : (
             <div className="flex justify-center">
-              <img src={beaconLogo} alt="Beacon" className="h-6 w-auto" />
+              <img src={beaconLogo} alt="Beacon" className="h-8 w-auto" />
             </div>
           )}
         </div>
@@ -99,18 +99,20 @@ export function AppSidebar() {
             return (
               <SidebarGroup key={category.title}>
                 <div 
-                  className="flex items-center justify-between p-3 hover:bg-accent cursor-pointer"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-accent/50 cursor-pointer rounded-lg mx-2 transition-all duration-200"
                   onClick={() => toggleCategory(category.title)}
                 >
-                  <div className="flex items-center gap-2">
-                    <category.icon className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 bg-primary/10 rounded-lg">
+                      <category.icon className="h-4 w-4 text-primary" />
+                    </div>
                     {!collapsed && (
                       <>
-                        <SidebarGroupLabel className="text-sm font-medium">
+                        <SidebarGroupLabel className="text-sm font-semibold text-foreground">
                           {category.title}
                         </SidebarGroupLabel>
                         {hasActiveItems && (
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
                             {category.items.filter(item => item.active).length}
                           </Badge>
                         )}
@@ -119,7 +121,7 @@ export function AppSidebar() {
                   </div>
                   {!collapsed && (
                     <ChevronRight 
-                      className={`h-4 w-4 text-muted-foreground transition-transform ${
+                      className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
                         isExpanded ? 'rotate-90' : ''
                       }`} 
                     />
@@ -133,19 +135,19 @@ export function AppSidebar() {
                         <SidebarMenuItem key={item.title}>
                           <SidebarMenuButton 
                             asChild
-                            className={`${collapsed ? 'justify-center px-2' : 'px-6'} ${
-                              isActive(item.url) ? 'bg-primary text-primary-foreground' : ''
+                            className={`${collapsed ? 'justify-center px-2' : 'px-4 ml-4'} py-2 rounded-lg transition-all duration-200 ${
+                              isActive(item.url) ? 'gradient-primary text-primary-foreground shadow-elegant' : 'hover:bg-accent'
                             } ${!item.active ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
                             {item.active ? (
-                              <NavLink to={item.url}>
+                              <NavLink to={item.url} className="flex items-center gap-3">
                                 <Database className="h-4 w-4" />
-                                {!collapsed && <span className="text-sm">{item.title}</span>}
+                                {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
                               </NavLink>
                             ) : (
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-3">
                                 <Plus className="h-4 w-4" />
-                                {!collapsed && <span className="text-sm">{item.title}</span>}
+                                {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
                               </div>
                             )}
                           </SidebarMenuButton>
@@ -160,11 +162,11 @@ export function AppSidebar() {
         </div>
 
         {/* Bottom Actions */}
-        <div className="p-4 border-t">
-          <Button asChild variant="outline" size="sm" className="w-full">
-            <NavLink to="/setup">
+        <div className="p-4 border-t border-border/50">
+          <Button asChild variant="outline" size="sm" className="w-full shadow-sm hover:shadow-md">
+            <NavLink to="/setup" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              {!collapsed && <span className="ml-2">Setup</span>}
+              {!collapsed && <span>Setup</span>}
             </NavLink>
           </Button>
         </div>
