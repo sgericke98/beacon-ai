@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Play, 
   Settings, 
@@ -17,7 +19,10 @@ import {
   RefreshCw,
   Zap,
   Target,
-  TrendingUp
+  TrendingUp,
+  Clock,
+  Eye,
+  History
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -89,7 +94,15 @@ const mockRecommendations = [
     impact: "High",
     affectedRecords: 46,
     timeToFix: "15 min",
-    category: "deduplication"
+    category: "deduplication",
+    details: {
+      duplicates: [
+        { master: "Acme Corporation", duplicates: ["ACME Corp", "Acme Corp.", "ACME Corporation Inc"] },
+        { master: "TechStart Inc", duplicates: ["TechStart Incorporated", "Tech Start Inc"] },
+        { master: "Global Systems", duplicates: ["Global Systems LLC", "Global Systems Ltd"] }
+      ],
+      reasoning: "Matched based on company name similarity (95%+ confidence), same domain email addresses, and overlapping contact information."
+    }
   },
   {
     id: 2,
@@ -99,7 +112,15 @@ const mockRecommendations = [
     impact: "Medium",
     affectedRecords: 156,
     timeToFix: "45 min",
-    category: "completion"
+    category: "completion",
+    details: {
+      breakdown: {
+        "Missing Phone": 89,
+        "Missing Address": 45,
+        "Missing Job Title": 22
+      },
+      suggestions: "Auto-populate from LinkedIn data enrichment, company website scraping, and email signature analysis."
+    }
   },
   {
     id: 3,
@@ -109,7 +130,16 @@ const mockRecommendations = [
     impact: "Medium",
     affectedRecords: 89,
     timeToFix: "10 min",
-    category: "standardization"
+    category: "standardization",
+    details: {
+      patterns: [
+        { from: "Inc.", to: "Inc" },
+        { from: "Incorporated", to: "Inc" },
+        { from: "LLC.", to: "LLC" },
+        { from: "Limited", to: "Ltd" }
+      ],
+      reasoning: "Standardizing legal entity suffixes improves data consistency and search accuracy."
+    }
   },
   {
     id: 4,
@@ -119,7 +149,59 @@ const mockRecommendations = [
     impact: "High",
     affectedRecords: 12,
     timeToFix: "5 min",
-    category: "validation"
+    category: "validation",
+    details: {
+      issues: [
+        "Missing @ symbol",
+        "Double dots in domain",
+        "Invalid domain extensions",
+        "Trailing spaces"
+      ],
+      autoFix: "AI can suggest corrections based on similar valid email patterns from the same company."
+    }
+  }
+];
+
+const mockHistory = [
+  {
+    id: 1,
+    timestamp: "2024-01-15 14:30:22",
+    action: "Merged duplicate accounts",
+    details: "Consolidated 5 duplicate 'Acme Corp' variations into single master record",
+    user: "System Auto-Apply",
+    status: "completed"
+  },
+  {
+    id: 2,
+    timestamp: "2024-01-15 14:25:18",
+    action: "Standardized company names",
+    details: "Applied naming convention rules to 34 company records",
+    user: "System Auto-Apply", 
+    status: "completed"
+  },
+  {
+    id: 3,
+    timestamp: "2024-01-15 14:20:45",
+    action: "Fixed invalid emails",
+    details: "Corrected 8 email addresses with formatting issues",
+    user: "John Smith",
+    status: "completed"
+  },
+  {
+    id: 4,
+    timestamp: "2024-01-15 14:15:32",
+    action: "Data enrichment",
+    details: "Added missing phone numbers to 23 contact records",
+    user: "System Auto-Apply",
+    status: "completed"
+  },
+  {
+    id: 5,
+    timestamp: "2024-01-15 14:10:15",
+    action: "Rejected duplicate suggestion",
+    details: "Marked 'Global Inc' and 'Global Industries' as separate entities",
+    user: "Jane Doe",
+    status: "rejected"
   }
 ];
 
@@ -129,6 +211,7 @@ export function DataCleaningAgent() {
   const [isRunning, setIsRunning] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<typeof mockRecommendations[0] | null>(null);
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -196,296 +279,423 @@ export function DataCleaningAgent() {
         </p>
       </div>
 
-      {/* Configuration Section */}
-      {!isRunning && !analysisComplete && (
-        <Card className="border-0 shadow-card">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Settings className="h-6 w-6 text-primary" />
-              <CardTitle className="text-xl">Data Source Configuration</CardTitle>
-            </div>
-            <CardDescription className="text-base">
-              Configure your data source connection and select the data types to analyze.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Data Source Selection */}
-            <div className="space-y-3">
-              <Label className="text-sm font-semibold text-foreground uppercase tracking-wide">Data Source</Label>
-              <Select value={selectedSource} onValueChange={setSelectedSource}>
-                <SelectTrigger className="w-full h-12">
-                  <SelectValue placeholder="Select your data source" />
-                </SelectTrigger>
-                <SelectContent>
-                  {dataSources.map((source) => (
-                    <SelectItem key={source.value} value={source.value}>
-                      <div className="flex items-center gap-3">
-                        <source.icon className="h-4 w-4" />
-                        {source.label}
+      <Tabs defaultValue="orchestrator" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 h-auto">
+          <TabsTrigger value="orchestrator" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Settings className="h-4 w-4" />
+            Data Orchestrator
+          </TabsTrigger>
+          <TabsTrigger value="history" className="flex items-center gap-2 py-3 px-6 text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <History className="h-4 w-4" />
+            Change History
+            <Badge variant="outline">{mockHistory.length}</Badge>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="orchestrator" className="space-y-6">
+          {/* Configuration Section */}
+          {!isRunning && !analysisComplete && (
+            <Card className="border-0 shadow-card">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Settings className="h-6 w-6 text-primary" />
+                  <CardTitle className="text-xl">Data Source Configuration</CardTitle>
+                </div>
+                <CardDescription className="text-base">
+                  Configure your data source connection and select the data types to analyze.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Data Source Selection */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-semibold text-foreground uppercase tracking-wide">Data Source</Label>
+                  <Select value={selectedSource} onValueChange={setSelectedSource}>
+                    <SelectTrigger className="w-full h-12">
+                      <SelectValue placeholder="Select your data source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {dataSources.map((source) => (
+                        <SelectItem key={source.value} value={source.value}>
+                          <div className="flex items-center gap-3">
+                            <source.icon className="h-4 w-4" />
+                            {source.label}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Credentials Section */}
+                {selectedSource && selectedSource !== 'csv' && (
+                  <div className="space-y-4 p-4 bg-accent/20 rounded-lg border border-accent/30">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-1.5 bg-primary/10 rounded-lg">
+                        {selectedSourceInfo && <selectedSourceInfo.icon className="h-4 w-4 text-primary" />}
                       </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                      <Label className="text-sm font-semibold text-foreground">
+                        {selectedSourceInfo?.label} Connection Details
+                      </Label>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="username">Username/Email</Label>
+                        <Input
+                          id="username"
+                          type="text"
+                          placeholder="your.email@company.com"
+                          value={credentials.username}
+                          onChange={(e) => setCredentials(prev => ({...prev, username: e.target.value}))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="apiKey">API Key</Label>
+                        <Input
+                          id="apiKey"
+                          type="password"
+                          placeholder="Enter your API key"
+                          value={credentials.apiKey}
+                          onChange={(e) => setCredentials(prev => ({...prev, apiKey: e.target.value}))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-            {/* Credentials Section */}
-            {selectedSource && selectedSource !== 'csv' && (
-              <div className="space-y-4 p-4 bg-accent/20 rounded-lg border border-accent/30">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-1.5 bg-primary/10 rounded-lg">
-                    {selectedSourceInfo && <selectedSourceInfo.icon className="h-4 w-4 text-primary" />}
-                  </div>
-                  <Label className="text-sm font-semibold text-foreground">
-                    {selectedSourceInfo?.label} Connection Details
-                  </Label>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="username">Username/Email</Label>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="your.email@company.com"
-                      value={credentials.username}
-                      onChange={(e) => setCredentials(prev => ({...prev, username: e.target.value}))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="apiKey">API Key</Label>
-                    <Input
-                      id="apiKey"
-                      type="password"
-                      placeholder="Enter your API key"
-                      value={credentials.apiKey}
-                      onChange={(e) => setCredentials(prev => ({...prev, apiKey: e.target.value}))}
-                    />
+                {/* Data Types Selection */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-semibold text-foreground uppercase tracking-wide">Data Types to Analyze</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {dataTypes.map((dataType) => (
+                      <Card 
+                        key={dataType.value}
+                        className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                          selectedDataTypes.includes(dataType.value) 
+                            ? 'bg-primary/10 border-primary shadow-sm' 
+                            : 'hover:bg-accent/50'
+                        }`}
+                        onClick={() => handleDataTypeToggle(dataType.value)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="font-medium text-sm">{dataType.label}</h3>
+                                {selectedDataTypes.includes(dataType.value) && (
+                                  <CheckCircle className="h-4 w-4 text-primary" />
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground">{dataType.description}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 </div>
-              </div>
-            )}
 
-            {/* Data Types Selection */}
-            <div className="space-y-3">
-              <Label className="text-sm font-semibold text-foreground uppercase tracking-wide">Data Types to Analyze</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {dataTypes.map((dataType) => (
-                  <Card 
-                    key={dataType.value}
-                    className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                      selectedDataTypes.includes(dataType.value) 
-                        ? 'bg-primary/10 border-primary shadow-sm' 
-                        : 'hover:bg-accent/50'
-                    }`}
-                    onClick={() => handleDataTypeToggle(dataType.value)}
+                {/* Run Button */}
+                <div className="pt-4 border-t border-border/50">
+                  <Button 
+                    onClick={handleRunAnalysis}
+                    size="lg"
+                    className="w-full md:w-auto flex items-center gap-2"
+                    disabled={!selectedSource || selectedDataTypes.length === 0}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
+                    <Play className="h-5 w-5" />
+                    Start Data Analysis
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Analysis Running Section */}
+          {isRunning && (
+            <Card className="border-0 shadow-card">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary">
+                    <RefreshCw className="h-6 w-6 opacity-0" />
+                  </div>
+                  <CardTitle className="text-xl">Running Data Analysis</CardTitle>
+                </div>
+                <CardDescription>
+                  Analyzing your {selectedSourceInfo?.label} data for quality issues and optimization opportunities.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  {mockAnalysisSteps.map((step, index) => {
+                    const isCompleted = index < currentStep;
+                    const isActive = index === currentStep - 1;
+                    const isPending = index >= currentStep;
+                    
+                    return (
+                      <div key={step.id} className="flex items-center gap-4 p-4 rounded-lg border bg-card">
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          isCompleted ? 'bg-success text-white' :
+                          isActive ? 'bg-primary text-white' :
+                          'bg-muted text-muted-foreground'
+                        }`}>
+                          {isCompleted ? (
+                            <CheckCircle className="h-4 w-4" />
+                          ) : isActive ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                          ) : (
+                            <span className="text-sm font-medium">{step.id}</span>
+                          )}
+                        </div>
+                        
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-medium text-sm">{dataType.label}</h3>
-                            {selectedDataTypes.includes(dataType.value) && (
-                              <CheckCircle className="h-4 w-4 text-primary" />
+                          <h3 className={`font-medium ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                            {step.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">{step.description}</p>
+                        </div>
+
+                        {isActive && (
+                          <Badge variant="outline" className="animate-pulse">
+                            Processing...
+                          </Badge>
+                        )}
+                        {isCompleted && (
+                          <Badge variant="outline" className="bg-success/10 text-success border-success/20">
+                            Complete
+                          </Badge>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Overall Progress</span>
+                    <span className="text-sm text-muted-foreground">
+                      {currentStep}/{mockAnalysisSteps.length} steps
+                    </span>
+                  </div>
+                  <Progress value={(currentStep / mockAnalysisSteps.length) * 100} className="h-3" />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Results Section */}
+          {analysisComplete && (
+            <Card className="border-0 shadow-card">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-6 w-6 text-success" />
+                    <CardTitle className="text-xl">Analysis Complete</CardTitle>
+                  </div>
+                  <Badge variant="outline" className="bg-success/10 text-success border-success/20">
+                    {mockRecommendations.length} recommendations
+                  </Badge>
+                </div>
+                <CardDescription className="text-base">
+                  Found {mockRecommendations.length} optimization opportunities that can improve your data quality.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {mockRecommendations.map((recommendation) => (
+                  <Card key={recommendation.id} className="border-l-4 border-l-primary bg-accent/5">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${
+                            recommendation.impact === 'High' ? 'bg-destructive/10' :
+                            'bg-warning/10'
+                          }`}>
+                            {recommendation.impact === 'High' ? (
+                              <AlertTriangle className="h-5 w-5 text-destructive" />
+                            ) : (
+                              <Target className="h-5 w-5 text-warning" />
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground">{dataType.description}</p>
+                          <div>
+                            <h3 className="font-semibold text-foreground">{recommendation.title}</h3>
+                            <p className="text-sm text-muted-foreground">{recommendation.type}</p>
+                          </div>
                         </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={recommendation.impact === 'High' ? 'destructive' : 'secondary'}>
+                            {recommendation.impact} Impact
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-muted-foreground mb-4">{recommendation.description}</p>
+
+                      <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Affected Records:</span>
+                          <div className="font-medium">{recommendation.affectedRecords}</div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Time to Fix:</span>
+                          <div className="font-medium">{recommendation.timeToFix}</div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Category:</span>
+                          <div className="font-medium capitalize">{recommendation.category}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <Button 
+                          size="sm"
+                          onClick={() => handleApplyRecommendation(recommendation.id)}
+                          className="flex items-center gap-2"
+                        >
+                          <Zap className="h-4 w-4" />
+                          Apply Fix
+                        </Button>
+                        
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setSelectedRecommendation(recommendation)}
+                              className="flex items-center gap-2"
+                            >
+                              <Eye className="h-4 w-4" />
+                              Review Details
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle>{recommendation.title}</DialogTitle>
+                              <DialogDescription>
+                                Detailed analysis of {recommendation.type.toLowerCase()}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div>
+                                <h4 className="font-medium mb-2">Impact Analysis</h4>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <span className="text-muted-foreground">Severity:</span>
+                                    <Badge variant={recommendation.impact === 'High' ? 'destructive' : 'secondary'} className="ml-2">
+                                      {recommendation.impact}
+                                    </Badge>
+                                  </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Records Affected:</span>
+                                    <span className="ml-2 font-medium">{recommendation.affectedRecords}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {recommendation.details && (
+                                <div>
+                                  <h4 className="font-medium mb-2">Technical Details</h4>
+                                  <div className="bg-muted/30 p-4 rounded-lg">
+                                    <pre className="text-sm whitespace-pre-wrap text-muted-foreground">
+                                      {JSON.stringify(recommendation.details, null, 2)}
+                                    </pre>
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <div className="flex gap-2 pt-4 border-t">
+                                <Button onClick={() => handleApplyRecommendation(recommendation.id)}>
+                                  Apply Recommendation
+                                </Button>
+                                <Button variant="outline">
+                                  Schedule for Later
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        
+                        <Button variant="ghost" size="sm">
+                          Skip
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
-              </div>
-            </div>
 
-            {/* Run Button */}
-            <div className="pt-4 border-t border-border/50">
-              <Button 
-                onClick={handleRunAnalysis}
-                size="lg"
-                className="w-full md:w-auto flex items-center gap-2"
-                disabled={!selectedSource || selectedDataTypes.length === 0}
-              >
-                <Play className="h-5 w-5" />
-                Start Data Analysis
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                <div className="pt-4 border-t border-border/50">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setAnalysisComplete(false);
+                      setCurrentStep(0);
+                      setSelectedSource("");
+                      setSelectedDataTypes([]);
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Run New Analysis
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
-      {/* Analysis Running Section */}
-      {isRunning && (
-        <Card className="border-0 shadow-card">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary">
-                <RefreshCw className="h-6 w-6 opacity-0" />
+        <TabsContent value="history" className="space-y-6">
+          <Card className="border-0 shadow-card">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <History className="h-6 w-6 text-primary" />
+                <CardTitle className="text-xl">Change History</CardTitle>
               </div>
-              <CardTitle className="text-xl">Running Data Analysis</CardTitle>
-            </div>
-            <CardDescription>
-              Analyzing your {selectedSourceInfo?.label} data for quality issues and optimization opportunities.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              {mockAnalysisSteps.map((step, index) => {
-                const isCompleted = index < currentStep;
-                const isActive = index === currentStep - 1;
-                const isPending = index >= currentStep;
-                
-                return (
-                  <div key={step.id} className="flex items-center gap-4 p-4 rounded-lg border bg-card">
+              <CardDescription className="text-base">
+                Track all data cleaning actions and their results over time.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {mockHistory.map((change) => (
+                  <div key={change.id} className="flex items-start gap-4 p-4 rounded-lg border bg-card">
                     <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                      isCompleted ? 'bg-success text-white' :
-                      isActive ? 'bg-primary text-white' :
+                      change.status === 'completed' ? 'bg-success/10 text-success' :
+                      change.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
                       'bg-muted text-muted-foreground'
                     }`}>
-                      {isCompleted ? (
+                      {change.status === 'completed' ? (
                         <CheckCircle className="h-4 w-4" />
-                      ) : isActive ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                      ) : change.status === 'rejected' ? (
+                        <AlertTriangle className="h-4 w-4" />
                       ) : (
-                        <span className="text-sm font-medium">{step.id}</span>
+                        <Clock className="h-4 w-4" />
                       )}
                     </div>
                     
-                    <div className="flex-1">
-                      <h3 className={`font-medium ${isActive ? 'text-primary' : 'text-foreground'}`}>
-                        {step.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
-                    </div>
-
-                    {isActive && (
-                      <Badge variant="outline" className="animate-pulse">
-                        Processing...
-                      </Badge>
-                    )}
-                    {isCompleted && (
-                      <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-                        Complete
-                      </Badge>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Overall Progress</span>
-                <span className="text-sm text-muted-foreground">
-                  {currentStep}/{mockAnalysisSteps.length} steps
-                </span>
-              </div>
-              <Progress value={(currentStep / mockAnalysisSteps.length) * 100} className="h-3" />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Results Section */}
-      {analysisComplete && (
-        <Card className="border-0 shadow-card">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-6 w-6 text-success" />
-                <CardTitle className="text-xl">Analysis Complete</CardTitle>
-              </div>
-              <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-                {mockRecommendations.length} recommendations
-              </Badge>
-            </div>
-            <CardDescription className="text-base">
-              Found {mockRecommendations.length} optimization opportunities that can improve your data quality.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {mockRecommendations.map((recommendation) => (
-              <Card key={recommendation.id} className="border-l-4 border-l-primary bg-accent/5">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        recommendation.impact === 'High' ? 'bg-destructive/10' :
-                        'bg-warning/10'
-                      }`}>
-                        {recommendation.impact === 'High' ? (
-                          <AlertTriangle className="h-5 w-5 text-destructive" />
-                        ) : (
-                          <Target className="h-5 w-5 text-warning" />
-                        )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="font-medium text-foreground">{change.action}</h3>
+                        <time className="text-xs text-muted-foreground">{change.timestamp}</time>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground">{recommendation.title}</h3>
-                        <p className="text-sm text-muted-foreground">{recommendation.type}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{change.details}</p>
+                      <div className="flex items-center gap-4 text-xs">
+                        <span className="text-muted-foreground">
+                          By: <span className="font-medium">{change.user}</span>
+                        </span>
+                        <Badge 
+                          variant={change.status === 'completed' ? 'default' : 'destructive'}
+                          className="text-xs"
+                        >
+                          {change.status}
+                        </Badge>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={recommendation.impact === 'High' ? 'destructive' : 'secondary'}>
-                        {recommendation.impact} Impact
-                      </Badge>
-                    </div>
                   </div>
-
-                  <p className="text-sm text-muted-foreground mb-4">{recommendation.description}</p>
-
-                  <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Affected Records:</span>
-                      <div className="font-medium">{recommendation.affectedRecords}</div>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Time to Fix:</span>
-                      <div className="font-medium">{recommendation.timeToFix}</div>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Category:</span>
-                      <div className="font-medium capitalize">{recommendation.category}</div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button 
-                      size="sm"
-                      onClick={() => handleApplyRecommendation(recommendation.id)}
-                      className="flex items-center gap-2"
-                    >
-                      <Zap className="h-4 w-4" />
-                      Apply Fix
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Review Details
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      Skip
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-
-            <div className="pt-4 border-t border-border/50">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setAnalysisComplete(false);
-                  setCurrentStep(0);
-                  setSelectedSource("");
-                  setSelectedDataTypes([]);
-                }}
-                className="flex items-center gap-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Run New Analysis
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
