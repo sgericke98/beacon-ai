@@ -77,12 +77,6 @@ export function AppSidebar() {
   return (
     <Sidebar className="w-64">
       <SidebarContent className="bg-card border-r shadow-card">
-        {/* Logo */}
-        <div className="p-6 border-b border-border/50">
-          <div className="flex items-center gap-3">
-            <img src={beaconLogo} alt="Beacon" className="h-10 w-auto" />
-          </div>
-        </div>
 
         {/* Navigation */}
         <div className="flex-1 overflow-auto">
