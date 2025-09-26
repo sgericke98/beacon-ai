@@ -120,68 +120,29 @@ const mockRecommendations = [
     timeToFix: "15 min",
     category: "deduplication",
     details: {
-      duplicates: [
-        { master: "Acme Corporation", duplicates: ["ACME Corp", "Acme Corp.", "ACME Corporation Inc"] },
-        { master: "TechStart Inc", duplicates: ["TechStart Incorporated", "Tech Start Inc"] },
-        { master: "Global Systems", duplicates: ["Global Systems LLC", "Global Systems Ltd"] }
+      summary: "We found 23 sets of duplicate accounts that are likely the same company but stored as separate records.",
+      examples: [
+        {
+          masterRecord: "Acme Corporation",
+          duplicateRecords: ["ACME Corp", "Acme Corp.", "ACME Corporation Inc"],
+          confidence: "95%",
+          reason: "Same company name with minor variations and identical email domain (@acme.com)"
+        },
+        {
+          masterRecord: "TechStart Inc",
+          duplicateRecords: ["TechStart Incorporated", "Tech Start Inc"],
+          confidence: "92%",
+          reason: "Identical phone number and address, same key contacts"
+        },
+        {
+          masterRecord: "Global Systems",
+          duplicateRecords: ["Global Systems LLC", "Global Systems Ltd"],
+          confidence: "88%",
+          reason: "Same website domain and overlapping contact information"
+        }
       ],
-      reasoning: "Matched based on company name similarity (95%+ confidence), same domain email addresses, and overlapping contact information."
-    }
-  },
-  {
-    id: 2,
-    type: "Missing Information",
-    title: "Complete 156 incomplete contact records",
-    description: "Contact records missing phone numbers, addresses, or job titles",
-    impact: "Medium",
-    affectedRecords: 156,
-    timeToFix: "45 min",
-    category: "completion",
-    details: {
-      breakdown: {
-        "Missing Phone": 89,
-        "Missing Address": 45,
-        "Missing Job Title": 22
-      },
-      suggestions: "Auto-populate from LinkedIn data enrichment, company website scraping, and email signature analysis."
-    }
-  },
-  {
-    id: 3,
-    type: "Data Standardization",
-    title: "Standardize 89 company name formats",
-    description: "Inconsistent naming conventions (Inc., Inc, Incorporated)",
-    impact: "Medium",
-    affectedRecords: 89,
-    timeToFix: "10 min",
-    category: "standardization",
-    details: {
-      patterns: [
-        { from: "Inc.", to: "Inc" },
-        { from: "Incorporated", to: "Inc" },
-        { from: "LLC.", to: "LLC" },
-        { from: "Limited", to: "Ltd" }
-      ],
-      reasoning: "Standardizing legal entity suffixes improves data consistency and search accuracy."
-    }
-  },
-  {
-    id: 4,
-    type: "Invalid Data",
-    title: "Fix 12 invalid email addresses",
-    description: "Email addresses with formatting errors or typos",
-    impact: "High",
-    affectedRecords: 12,
-    timeToFix: "5 min",
-    category: "validation",
-    details: {
-      issues: [
-        "Missing @ symbol",
-        "Double dots in domain",
-        "Invalid domain extensions",
-        "Trailing spaces"
-      ],
-      autoFix: "AI can suggest corrections based on similar valid email patterns from the same company."
+      impact: "Merging these duplicates will eliminate confusion in sales reports and prevent multiple team members from contacting the same company.",
+      recommendedAction: "Merge the duplicate records into the most complete master record and update all related contacts and opportunities."
     }
   }
 ];
@@ -645,12 +606,40 @@ export function DataCleaningAgent() {
                               </div>
                               
                               {recommendation.details && (
-                                <div>
-                                  <h4 className="font-medium mb-2">Technical Details</h4>
-                                  <div className="bg-muted/30 p-4 rounded-lg">
-                                    <pre className="text-sm whitespace-pre-wrap text-muted-foreground">
-                                      {JSON.stringify(recommendation.details, null, 2)}
-                                    </pre>
+                                <div className="space-y-4">
+                                  <div>
+                                    <h4 className="font-medium mb-2">Summary</h4>
+                                    <p className="text-sm text-muted-foreground">{recommendation.details.summary}</p>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="font-medium mb-3">Examples Found</h4>
+                                    <div className="space-y-3">
+                                      {recommendation.details.examples?.map((example: any, index: number) => (
+                                        <div key={index} className="p-3 bg-background/50 rounded border space-y-2">
+                                          <div className="flex items-center justify-between">
+                                            <span className="font-medium text-sm text-primary">{example.masterRecord}</span>
+                                            <Badge variant="outline" className="text-xs">{example.confidence} match</Badge>
+                                          </div>
+                                          <div className="text-xs text-muted-foreground">
+                                            <strong>Duplicates:</strong> {example.duplicateRecords?.join(", ")}
+                                          </div>
+                                          <div className="text-xs text-muted-foreground">
+                                            <strong>Reason:</strong> {example.reason}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="font-medium mb-2">Impact</h4>
+                                    <p className="text-sm text-muted-foreground">{recommendation.details.impact}</p>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="font-medium mb-2">Recommended Action</h4>
+                                    <p className="text-sm text-muted-foreground">{recommendation.details.recommendedAction}</p>
                                   </div>
                                 </div>
                               )}
