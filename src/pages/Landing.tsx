@@ -17,8 +17,7 @@ const Landing = () => {
           {/* Navigation */}
           <header className="h-16 flex items-center border-b bg-card px-6 sticky top-0 z-50">
             <SidebarTrigger />
-            <div className="ml-4 flex items-center gap-3">
-              <img src={beaconLogo} alt="Beacon" className="h-6" />
+            <div className="ml-4">
               <span className="text-lg font-semibold text-foreground">Beacon Platform</span>
             </div>
             <div className="ml-auto flex items-center gap-4">
