@@ -1,7 +1,7 @@
 {
   "/page": "app/page.js",
-  "/agents/data-cleaning/page": "app/agents/data-cleaning/page.js",
+  "/agents/lead-to-cash/page": "app/agents/lead-to-cash/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/setup/page": "app/setup/page.js",
-  "/agents/lead-to-cash/page": "app/agents/lead-to-cash/page.js"
+  "/agents/data-cleaning/page": "app/agents/data-cleaning/page.js",
+  "/setup/page": "app/setup/page.js"
 }

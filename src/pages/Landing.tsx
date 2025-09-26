@@ -20,14 +20,6 @@ const Landing = () => {
           <header className="h-16 flex items-center border-b bg-card px-6 sticky top-0 z-50">
             <SidebarTrigger />
             <div className="ml-4 flex items-center gap-3">
-                  <div className="relative group">
-                    <img
-                      src="/assets/beacon_powered_techtorch-logo-white.svg"
-                      alt="Beacon"
-                      className="h-6 w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-sm"
-                    />
-                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
-                  </div>
               <div className="flex flex-col">
                 <span className="text-lg font-semibold text-foreground leading-none">Beacon Platform</span>
                 <span className="text-xs text-muted-foreground leading-none">AI-Powered Business Intelligence</span>
