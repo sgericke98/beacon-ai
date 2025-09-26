@@ -1,3 +1,5 @@
+"use client";
+
 import { SetupPage } from "@/components/SetupPage";
 
 const Setup = () => {

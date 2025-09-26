@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -340,7 +342,7 @@ export function LeadToCashAgent() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="text-center lg:text-left">
-        <h1 className="text-3xl font-bold text-foreground mb-3 tracking-tight">Lead-to-Cash Analysis Agent</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-3 tracking-tight">L2C Analysis Agent</h1>
         <p className="text-lg text-muted-foreground max-w-2xl">
           Comprehensive analytics and revenue leakage detection for your sales process.
         </p>

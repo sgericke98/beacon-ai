@@ -1,3 +1,5 @@
+"use client";
+
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { LeadToCashAgent } from "@/components/LeadToCashAgent";
@@ -12,7 +14,7 @@ const LeadToCash = () => {
           <header className="h-14 flex items-center border-b bg-card px-6">
             <SidebarTrigger />
             <div className="ml-4">
-              <h1 className="text-lg font-semibold">Lead-to-Cash Analysis</h1>
+              <h1 className="text-lg font-semibold">L2C Analysis</h1>
             </div>
           </header>
           

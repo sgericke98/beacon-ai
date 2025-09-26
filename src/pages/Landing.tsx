@@ -1,11 +1,13 @@
+"use client";
+
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BarChart3, TrendingUp, Users, DollarSign, Target, CheckCircle, Zap, Shield, Globe } from "lucide-react";
-import { Link } from "react-router-dom";
-import beaconLogo from "@/assets/beacon-logo-vertical-white.svg";
+import Link from "next/link";
+// Logo will be served from public/assets
 
 const Landing = () => {
   return (
@@ -17,15 +19,26 @@ const Landing = () => {
           {/* Navigation */}
           <header className="h-16 flex items-center border-b bg-card px-6 sticky top-0 z-50">
             <SidebarTrigger />
-            <div className="ml-4">
-              <span className="text-lg font-semibold text-foreground">Beacon Platform</span>
+            <div className="ml-4 flex items-center gap-3">
+                  <div className="relative group">
+                    <img
+                      src="/assets/beacon_powered_techtorch-logo-white.svg"
+                      alt="Beacon"
+                      className="h-6 w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-sm"
+                    />
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
+                  </div>
+              <div className="flex flex-col">
+                <span className="text-lg font-semibold text-foreground leading-none">Beacon Platform</span>
+                <span className="text-xs text-muted-foreground leading-none">AI-Powered Business Intelligence</span>
+              </div>
             </div>
             <div className="ml-auto flex items-center gap-4">
               <Button variant="ghost" asChild>
-                <Link to="/setup" className="text-foreground hover:text-primary">Setup</Link>
+                <Link href="/setup" className="text-foreground hover:text-primary">Setup</Link>
               </Button>
               <Button asChild>
-                <Link to="/dashboard" className="flex items-center gap-2">
+                <Link href="/dashboard" className="flex items-center gap-2">
                   Get Started
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -55,13 +68,13 @@ const Landing = () => {
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button size="lg" asChild className="shadow-elegant">
-                    <Link to="/dashboard" className="flex items-center gap-2">
+                    <Link href="/dashboard" className="flex items-center gap-2">
                       Start Free Demo
                       <ArrowRight className="h-5 w-5" />
                     </Link>
                   </Button>
                   <Button variant="outline" size="lg" asChild>
-                    <Link to="/setup">View Setup Guide</Link>
+                    <Link href="/setup">View Setup Guide</Link>
                   </Button>
                 </div>
               </div>
@@ -96,11 +109,7 @@ const Landing = () => {
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-success" />
-                          <span className="text-sm text-card-foreground">Account deduplication</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4 text-success" />
-                          <span className="text-sm text-card-foreground">Contract name standardization</span>
+                          <span className="text-sm text-card-foreground">Account deduplication / hierarchy</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-success" />
@@ -108,7 +117,7 @@ const Landing = () => {
                         </div>
                       </div>
                       <Button className="w-full mt-6" asChild>
-                        <Link to="/agents/data-cleaning">
+                        <Link href="/agents/data-cleaning">
                           Try Data Cleaning Agent
                         </Link>
                       </Button>
@@ -123,7 +132,7 @@ const Landing = () => {
                         </div>
                         <Badge className="bg-success/10 text-success border-success/20">Active</Badge>
                       </div>
-                      <CardTitle className="text-xl text-card-foreground">Lead-to-Cash Analysis Agent</CardTitle>
+                      <CardTitle className="text-xl text-card-foreground">L2C Analysis Agent</CardTitle>
                       <CardDescription className="text-base text-muted-foreground">
                         Comprehensive sales process analytics with revenue leakage detection. 
                         Upload contracts to identify billing discrepancies automatically.
@@ -145,7 +154,7 @@ const Landing = () => {
                         </div>
                       </div>
                       <Button className="w-full mt-6" variant="secondary" asChild>
-                        <Link to="/agents/lead-to-cash">
+                        <Link href="/agents/lead-to-cash">
                           Try L2C Analysis Agent
                         </Link>
                       </Button>
@@ -182,7 +191,7 @@ const Landing = () => {
                     </div>
                     <h3 className="text-xl font-semibold text-card-foreground">Enterprise Security</h3>
                     <p className="text-muted-foreground">
-                      Bank-grade encryption and compliance with SOC 2, GDPR, and other enterprise security standards.
+                      Bank-grade encryption and compliance with SOC 2 Type II, GDPR, and other enterprise security standards.
                     </p>
                   </div>
 
@@ -192,7 +201,7 @@ const Landing = () => {
                     </div>
                     <h3 className="text-xl font-semibold text-card-foreground">Seamless Integration</h3>
                     <p className="text-muted-foreground">
-                      Connect with Salesforce, NetSuite, HubSpot, and 100+ other business systems out of the box.
+                      Connect with Salesforce, NetSuite, and other business systems out of the box.
                     </p>
                   </div>
                 </div>
@@ -260,13 +269,13 @@ const Landing = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button size="lg" asChild className="shadow-elegant">
-                    <Link to="/setup" className="flex items-center gap-2">
+                    <Link href="/setup" className="flex items-center gap-2">
                       Start Setup Process
                       <ArrowRight className="h-5 w-5" />
                     </Link>
                   </Button>
                   <Button variant="outline" size="lg" asChild>
-                    <Link to="/dashboard">View Live Demo</Link>
+                    <Link href="/dashboard">View Live Demo</Link>
                   </Button>
                 </div>
               </div>
@@ -276,17 +285,29 @@ const Landing = () => {
             <footer className="border-t bg-card py-12 px-6">
               <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-center">
-                  <div className="flex items-center gap-3 mb-4 md:mb-0">
-                    <img src={beaconLogo} alt="Beacon" className="h-6" />
-                    <span className="text-sm text-muted-foreground">
-                      © 2024 Beacon. Formerly TechTorch.
-                    </span>
+                    <div className="flex items-center gap-4 mb-4 md:mb-0">
+                      <div className="relative group">
+                        <img
+                          src="/assets/beacon_powered_techtorch-logo-white.svg"
+                          alt="Beacon Platform"
+                          className="h-8 w-auto transition-all duration-300 group-hover:scale-110 drop-shadow-sm"
+                        />
+                        <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
+                      </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-foreground">
+                        Beacon Platform
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        © 2024 Beacon. Formerly TechTorch.
+                      </span>
+                    </div>
                   </div>
                   <div className="flex items-center gap-6">
-                    <Link to="/setup" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <Link href="/setup" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                       Setup
                     </Link>
-                    <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                       Dashboard
                     </Link>
                     <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary">
