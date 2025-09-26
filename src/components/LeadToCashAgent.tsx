@@ -700,117 +700,182 @@ export function LeadToCashAgent() {
         </TabsContent>
 
         <TabsContent value="revenue-leakage" className="space-y-6">
+          {/* Contract Overview */}
           <Card>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <Upload className="h-5 w-5" />
-                <CardTitle>Revenue Leakage Analysis</CardTitle>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <div>
+                    <CardTitle>Contract Portfolio Overview</CardTitle>
+                    <CardDescription>
+                      Analysis of 47 active contracts for revenue leakage detection
+                    </CardDescription>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Add Contracts
+                </Button>
               </div>
-              <CardDescription>
-                Upload contracts to detect discrepancies and revenue leakage opportunities.
-              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <div className="space-y-2">
-                  <h3 className="font-medium">Upload Contract Documents</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Support for PDF, DOCX, and TXT files. Maximum 10MB per file.
-                  </p>
-                  <div className="pt-2">
-                    <Input
-                      type="file"
-                      accept=".pdf,.docx,.txt"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="contract-upload"
-                    />
-                    <Button asChild>
-                      <label htmlFor="contract-upload" className="cursor-pointer">
-                        Choose Files
-                      </label>
-                    </Button>
-                  </div>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-card border rounded-lg p-4">
+                  <div className="text-2xl font-bold text-foreground">47</div>
+                  <div className="text-sm text-muted-foreground">Active Contracts</div>
+                </div>
+                <div className="bg-card border rounded-lg p-4">
+                  <div className="text-2xl font-bold text-success">$2.4M</div>
+                  <div className="text-sm text-muted-foreground">Contract Value</div>
+                </div>
+                <div className="bg-card border rounded-lg p-4">
+                  <div className="text-2xl font-bold text-warning">$89K</div>
+                  <div className="text-sm text-muted-foreground">At Risk Revenue</div>
+                </div>
+                <div className="bg-card border rounded-lg p-4">
+                  <div className="text-2xl font-bold text-destructive">3</div>
+                  <div className="text-sm text-muted-foreground">Critical Issues</div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {uploadedFile && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 p-3 bg-accent rounded-lg">
-                    <FileText className="h-4 w-4" />
-                    <span className="text-sm font-medium">{uploadedFile}</span>
-                    <Badge variant="outline">Uploaded</Badge>
-                  </div>
-
-                  {isAnalyzing && (
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="text-center space-y-3">
-                          <div className="flex items-center justify-center gap-2">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                            <span className="text-sm font-medium">Analyzing contract...</span>
-                          </div>
-                          <Progress value={75} className="w-full" />
-                          <p className="text-xs text-muted-foreground">
-                            Comparing contract terms with billing records and invoice data
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {analysisComplete && (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 p-3 bg-success/10 border border-success rounded-lg">
-                        <CheckCircle2 className="h-4 w-4 text-success" />
-                        <span className="text-sm font-medium text-success">Analysis Complete</span>
-                        <Badge variant="outline">3 issues found</Badge>
-                      </div>
-
-                      {mockLeakageData.map((issue) => (
-                        <Card key={issue.id} className={`border-l-4 ${
-                          issue.status === 'high' ? 'border-l-destructive' :
-                          issue.status === 'medium' ? 'border-l-warning' :
-                          'border-l-info'
-                        }`}>
-                          <CardContent className="pt-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <AlertTriangle className={`h-4 w-4 ${
-                                  issue.status === 'high' ? 'text-destructive' :
-                                  issue.status === 'medium' ? 'text-warning' :
-                                  'text-info'
-                                }`} />
-                                <span className="font-medium">{issue.type}</span>
-                                <Badge variant="outline">{issue.confidence}% confidence</Badge>
-                              </div>
-                              <Badge variant={
-                                issue.status === 'high' ? 'destructive' :
-                                issue.status === 'medium' ? 'secondary' :
-                                'outline'
-                              }>
-                                {issue.impact} impact
-                              </Badge>
-                            </div>
-                            
-                            <p className="text-sm text-muted-foreground mb-3">{issue.description}</p>
-                            
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="default">
-                                Review Details
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                Mark as Resolved
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
+          {/* Revenue Leakage Issues */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  <CardTitle>Revenue Leakage Detection</CardTitle>
                 </div>
-              )}
+                <div className="flex items-center gap-2">
+                  <Badge variant="destructive">3 Critical</Badge>
+                  <Badge variant="secondary">2 Medium</Badge>
+                  <Button size="sm">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Re-analyze
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {mockLeakageData.map((issue) => (
+                  <Card key={issue.id} className={`border-l-4 ${
+                    issue.status === 'high' ? 'border-l-destructive' :
+                    issue.status === 'medium' ? 'border-l-warning' :
+                    'border-l-info'
+                  }`}>
+                    <CardContent className="pt-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className={`h-4 w-4 ${
+                            issue.status === 'high' ? 'text-destructive' :
+                            issue.status === 'medium' ? 'text-warning' :
+                            'text-info'
+                          }`} />
+                          <span className="font-medium">{issue.type}</span>
+                          <Badge variant="outline">{issue.confidence}% confidence</Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={
+                            issue.status === 'high' ? 'destructive' :
+                            issue.status === 'medium' ? 'secondary' :
+                            'outline'
+                          }>
+                            {issue.impact} impact
+                          </Badge>
+                          <Badge variant="outline">
+                            ${(Math.random() * 50000 + 10000).toLocaleString()}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-3">{issue.description}</p>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-muted-foreground">
+                          Contract: ACME-2024-{String(issue.id).padStart(3, '0')} • Last updated: 2 days ago
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="default">
+                            Review Contract
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            Mark Resolved
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+
+                {/* Additional Revenue Leakage Items */}
+                <Card className="border-l-4 border-l-warning">
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-warning" />
+                        <span className="font-medium">Auto-renewal Mismatch</span>
+                        <Badge variant="outline">87% confidence</Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">Medium impact</Badge>
+                        <Badge variant="outline">$23,400</Badge>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Contract specifies auto-renewal with 5% increase, but billing system shows flat renewal rate for past 6 months.
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-muted-foreground">
+                        Contract: TECHCORP-2023-156 • Last updated: 1 week ago
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="default">
+                          Review Contract
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          Mark Resolved
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-l-4 border-l-warning">
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-warning" />
+                        <span className="font-medium">Usage Overage Detection</span>
+                        <Badge variant="outline">92% confidence</Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">Medium impact</Badge>
+                        <Badge variant="outline">$15,670</Badge>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Client exceeded usage limits by 34% in Q3 but no overage charges were applied according to contract terms.
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-muted-foreground">
+                        Contract: GLOBALINC-2024-089 • Last updated: 3 days ago
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="default">
+                          Review Contract
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          Mark Resolved
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </CardContent>
           </Card>
           </TabsContent>
