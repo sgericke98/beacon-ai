@@ -21,12 +21,12 @@ All colors MUST be HSL.
     --primary-foreground: 255 255 255;
 
     --secondary: 248 250 252;
-    --secondary-foreground: 71 85 105;
+    --secondary-foreground: 30 41 59;
 
     --muted: 241 245 249;
-    --muted-foreground: 100 116 139;
+    --muted-foreground: 71 85 105;
 
-    --accent: 99 102 241;
+    --accent: 59 130 246;
     --accent-foreground: 255 255 255;
 
     --destructive: 239 68 68;
@@ -38,13 +38,24 @@ All colors MUST be HSL.
 
     --success: 34 197 94;
     --warning: 245 158 11;
-    --info: 99 102 241;
+    --info: 59 130 246;
 
-    --gradient-primary: linear-gradient(135deg, hsl(15 23 42), hsl(30 41 59));
-    --gradient-hero: linear-gradient(135deg, hsl(15 23 42), hsl(99 102 241 / 0.1));
+    --gradient-primary: linear-gradient(135deg, hsl(15 23 42), hsl(59 130 246));
+    --gradient-hero: linear-gradient(135deg, hsl(248 250 252), hsl(241 245 249));
     --gradient-subtle: linear-gradient(180deg, hsl(255 255 255), hsl(248 250 252));
     --shadow-elegant: 0 10px 40px -10px hsl(15 23 42 / 0.2);
     --shadow-card: 0 4px 12px -4px hsl(15 23 42 / 0.1);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 248 250 252;
+    --sidebar-foreground: 30 41 59;
+    --sidebar-primary: 15 23 42;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 241 245 249;
+    --sidebar-accent-foreground: 30 41 59;
+    --sidebar-border: 226 232 240;
+    --sidebar-ring: 15 23 42;
 
     --radius: 0.75rem;
 
@@ -84,7 +95,7 @@ All colors MUST be HSL.
     --muted: 30 41 59;
     --muted-foreground: 148 163 184;
 
-    --accent: 99 102 241;
+    --accent: 59 130 246;
     --accent-foreground: 255 255 255;
 
     --destructive: 220 38 38;
@@ -96,13 +107,22 @@ All colors MUST be HSL.
 
     --success: 34 197 94;
     --warning: 245 158 11;
-    --info: 99 102 241;
+    --info: 59 130 246;
 
-    --gradient-primary: linear-gradient(135deg, hsl(248 250 252), hsl(99 102 241 / 0.2));
+    --gradient-primary: linear-gradient(135deg, hsl(248 250 252), hsl(59 130 246));
     --gradient-hero: linear-gradient(135deg, hsl(3 7 18), hsl(15 23 42));
     --gradient-subtle: linear-gradient(180deg, hsl(3 7 18), hsl(15 23 42));
-    --shadow-elegant: 0 10px 40px -10px hsl(99 102 241 / 0.3);
+    --shadow-elegant: 0 10px 40px -10px hsl(59 130 246 / 0.3);
     --shadow-card: 0 4px 12px -4px hsl(248 250 252 / 0.1);
+    
+    --sidebar-background: 15 23 42;
+    --sidebar-foreground: 248 250 252;
+    --sidebar-primary: 59 130 246;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 30 41 59;
+    --sidebar-accent-foreground: 248 250 252;
+    --sidebar-border: 51 65 85;
+    --sidebar-ring: 59 130 246;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
