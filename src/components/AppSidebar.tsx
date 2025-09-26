@@ -75,19 +75,13 @@ export function AppSidebar() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <Sidebar className={collapsed ? "w-16" : "w-64"}>
+    <Sidebar className="w-64">
       <SidebarContent className="bg-card border-r shadow-card">
         {/* Logo */}
         <div className="p-6 border-b border-border/50">
-          {!collapsed ? (
-            <div className="flex items-center gap-3">
-              <img src={beaconLogo} alt="Beacon" className="h-10 w-auto" />
-            </div>
-          ) : (
-            <div className="flex justify-center">
-              <img src={beaconLogo} alt="Beacon" className="h-8 w-auto" />
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <img src={beaconLogo} alt="Beacon" className="h-10 w-auto" />
+          </div>
         </div>
 
         {/* Navigation */}
@@ -106,48 +100,42 @@ export function AppSidebar() {
                     <div className="p-1.5 bg-primary/10 rounded-lg">
                       <category.icon className="h-4 w-4 text-primary" />
                     </div>
-                    {!collapsed && (
-                      <>
-                        <SidebarGroupLabel className="text-sm font-semibold text-foreground">
-                          {category.title}
-                        </SidebarGroupLabel>
-                        {hasActiveItems && (
-                          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
-                            {category.items.filter(item => item.active).length}
-                          </Badge>
-                        )}
-                      </>
+                    <SidebarGroupLabel className="text-sm font-semibold text-foreground">
+                      {category.title}
+                    </SidebarGroupLabel>
+                    {hasActiveItems && (
+                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+                        {category.items.filter(item => item.active).length}
+                      </Badge>
                     )}
                   </div>
-                  {!collapsed && (
-                    <ChevronRight 
-                      className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
-                        isExpanded ? 'rotate-90' : ''
-                      }`} 
-                    />
-                  )}
+                  <ChevronRight 
+                    className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
+                      isExpanded ? 'rotate-90' : ''
+                    }`} 
+                  />
                 </div>
 
-                {(isExpanded || collapsed) && (
+                {isExpanded && (
                   <SidebarGroupContent>
                     <SidebarMenu>
                       {category.items.map((item) => (
                         <SidebarMenuItem key={item.title}>
                           <SidebarMenuButton 
                             asChild
-                            className={`${collapsed ? 'justify-center px-2' : 'px-4 ml-4'} py-2 rounded-lg transition-all duration-200 ${
+                            className={`px-4 ml-4 py-2 rounded-lg transition-all duration-200 ${
                               isActive(item.url) ? 'gradient-primary text-primary-foreground shadow-elegant' : 'hover:bg-accent'
                             } ${!item.active ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
                             {item.active ? (
                               <NavLink to={item.url} className="flex items-center gap-3">
                                 <Database className="h-4 w-4" />
-                                {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
+                                <span className="text-sm font-medium">{item.title}</span>
                               </NavLink>
                             ) : (
                               <div className="flex items-center gap-3">
                                 <Plus className="h-4 w-4" />
-                                {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
+                                <span className="text-sm font-medium">{item.title}</span>
                               </div>
                             )}
                           </SidebarMenuButton>
@@ -166,7 +154,7 @@ export function AppSidebar() {
           <Button asChild variant="outline" size="sm" className="w-full shadow-sm hover:shadow-md">
             <NavLink to="/setup" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              {!collapsed && <span>Setup</span>}
+              <span>Setup</span>
             </NavLink>
           </Button>
         </div>
