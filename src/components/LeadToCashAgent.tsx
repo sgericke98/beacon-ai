@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { 
   TrendingUp, 
@@ -848,8 +849,9 @@ export function LeadToCashAgent() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {mockLeakageData.map((issue) => (
+              <ScrollArea className="h-[600px] pr-4">
+                <div className="space-y-4">
+                  {mockLeakageData.map((issue) => (
                   <Card key={issue.id} className={`border-l-4 ${
                     issue.status === 'high' ? 'border-l-destructive' :
                     issue.status === 'medium' ? 'border-l-warning' :
@@ -975,7 +977,8 @@ export function LeadToCashAgent() {
                     </div>
                   </CardContent>
                 </Card>
-              </div>
+                </div>
+              </ScrollArea>
             </CardContent>
           </Card>
           </TabsContent>
